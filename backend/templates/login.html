@@ -1,0 +1,272 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - b2bomni</title>
+    <style>
+        /* --- RESET E BASE --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif, Arial;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #E0E0E0; 
+            color: #333;
+        }
+
+        /* --- CONTEÚDO CENTRAL --- */
+        .login-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px; 
+        }
+
+        /* --- LOGO PRINCIPAL --- */
+        .brand-header {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 0 20px; 
+        }
+
+        .logo-img {
+            width: 100%; 
+            max-width: 500px;
+            height: auto;
+            display: block;
+        }
+
+        /* --- FORMULÁRIO --- */
+        .login-form {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .input-group label {
+            font-size: 0.95rem;
+            color: #444;
+            font-weight: 500;
+            margin-left: 2px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 6px;
+            border: none;
+            background-color: #FFFFFF;
+            font-size: 1rem;
+            outline: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .input-group input:focus {
+            box-shadow: 0 0 0 2px #6A0DAD;
+        }
+
+        .btn-login {
+            background-color: #333333;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-login:hover {
+            background-color: #1a1a1a;
+        }
+
+        #message-box {
+            text-align: center;
+            font-size: 0.9rem;
+            min-height: 10px;
+            margin-bottom: 5px;
+        }
+        .error { color: #D32F2F; }
+        .success { color: #388E3C; }
+
+        /* --- RODAPÉ AJUSTADO (Mais fino) --- */
+        .login-footer {
+            background-color: #F5F5F5;
+            
+            /* REDUZIDO: De 30px para 15px. Isso diminui a altura vertical da barra */
+            padding: 15px 5%; 
+            
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+        }
+
+        .footer-logo-img {
+            /* AJUSTADO: 60px equilibra bem entre ser visível e não esticar o footer */
+            height: 60px; 
+            width: auto;
+            display: block;
+        }
+
+        .footer-link {
+            text-decoration: none;
+            color: #000;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 0.7;
+        }
+
+        /* --- MOBILE --- */
+        @media (max-width: 800px) {
+            .login-footer {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+            }
+            .footer-link {
+                display: block;
+                margin: 5px 0;
+            }
+            .logo-img {
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="login-content">
+        <div class="login-wrapper">
+            <div class="brand-header">
+                <img src="{% static 'assets/b2b.png' %}" alt="b2bflowOmni Logo" class="logo-img">
+            </div>
+
+            <form class="login-form" id="loginForm">
+                <div id="message-box"></div>
+
+                <div class="input-group">
+                    <label for="username">E-mail</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <button type="submit" class="btn-login">Entrar</button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="login-footer">
+        <div class="footer-logo">
+            <img src="{% static 'assets/b2bfooter.png' %}" alt="b2bflow" class="footer-logo-img">
+        </div>
+        
+        <a href="#" class="footer-link">Sobre</a>
+        <a href="#" class="footer-link">Documentação</a>
+        <a href="#" class="footer-link">Support</a>
+    </footer>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const messageBox = document.getElementById('message-box');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            messageBox.innerHTML = 'Conectando...';
+            messageBox.className = '';
+
+            const usernameInput = document.getElementById('username').value; 
+            const passwordInput = document.getElementById('password').value;
+
+            const payload = {
+                username: usernameInput,
+                password: passwordInput
+            };
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/token/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store tokens in localStorage for SPA use
+                    localStorage.setItem('accessToken', data.access);
+                    localStorage.setItem('refreshToken', data.refresh);
+
+                    // Also set cookies so server-side redirects can read the token.
+                    // Note: HttpOnly cannot be set from JS; for production consider
+                    // setting cookies from the server for better security.
+                    function setCookie(name, value, maxAgeSec) {
+                        let cookie = name + '=' + value + '; Path=/; SameSite=Lax;';
+                        if (maxAgeSec) cookie += ' Max-Age=' + maxAgeSec + ';';
+                        if (location.protocol === 'https:') cookie += ' Secure;';
+                        document.cookie = cookie;
+                    }
+
+                    // Access token ~30 minutes, refresh token ~1 day
+                    setCookie('accessToken', data.access, 30 * 60);
+                    setCookie('refreshToken', data.refresh, 24 * 60 * 60);
+
+                    messageBox.innerText = 'Login realizado com sucesso!';
+                    messageBox.className = 'success';
+
+                    if (data.is_admin === true) {
+                        window.location.href = '/dashboard/admin/';
+                    } else {
+                        window.location.href = '/dashboard/user/';
+                    }
+                } else {
+                    messageBox.innerText = 'Erro: ' + (data.detail || 'Credenciais inválidas.');
+                    messageBox.className = 'error';
+                }
+            } catch (error) {
+                console.error("Erro:", error);
+                messageBox.innerText = 'Erro de conexão.';
+                messageBox.className = 'error';
+            }
+        });
+    </script>
+</body>
+</html>
